@@ -35,10 +35,15 @@ namespace BeekeepingStore
             });
             services.AddMvc();
             services.AddControllersWithViews();
-            services.AddDbContext<BeekeepingDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddDefaultIdentity<IdentityUser>().
-                AddEntityFrameworkStores<BeekeepingDbContext>();           
+            services.AddDbContext<BeekeepingDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("Default")));
+            
+            services.AddIdentity<IdentityUser, IdentityRole>().
+                AddEntityFrameworkStores<BeekeepingDbContext>().
+                AddDefaultUI().AddDefaultTokenProviders();
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
+            services.AddRazorPages();
         }
 
 
@@ -48,6 +53,7 @@ namespace BeekeepingStore
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+               
             }
             else
             {
@@ -62,9 +68,9 @@ namespace BeekeepingStore
             app.UseAuthentication();
 
             app.UseAuthorization();
-          //  app.UseMvcWithDefaultRoute();
-
-            app.UseEndpoints(endpoints:IEndpointRouteBuilder =>
+            //  app.UseMvcWithDefaultRoute();
+            
+            app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute(
@@ -80,15 +86,6 @@ namespace BeekeepingStore
                 endpoints.MapRazorPages(); 
             });
 
-
-
-
-
-            //routes.MapRoute("ByYearMonth",
-            //    "make/propolis/{year:int:length(4)}/{month:int:range(1,12)}",
-            //    new { controller = "make", action = "ByYearMonth" },
-            //    new { year = @"2017|2018" }
-            //    );
         }
 
     }

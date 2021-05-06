@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BeekeepingStore.Models;
 using BeekeepingStore.AppDbContext;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BeekeepingStore.Controllers
 {
@@ -20,6 +21,7 @@ namespace BeekeepingStore.Controllers
             return View(_db.Makes.ToList());
         }
         //HTTP Get Method
+        //[Authorize]
         public IActionResult Create()
         {
             return View();
