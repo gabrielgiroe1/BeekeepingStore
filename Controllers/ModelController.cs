@@ -1,6 +1,7 @@
 ﻿using BeekeepingStore.AppDbContext;
 using BeekeepingStore.Models;
 using BeekeepingStore.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace BeekeepingStore.Controllers
 {
+    [Authorize(Roles = "Admin,Executive")]
     public class ModelController : Controller
     {
         private readonly BeekeepingDbContext _db;

@@ -1,6 +1,7 @@
 using BeekeepingStore.AppDbContext;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -35,15 +36,24 @@ namespace BeekeepingStore
             });
             services.AddMvc();
             services.AddControllersWithViews();
+
+            services.AddIdentity<IdentityUser, IdentityRole>().
+           AddEntityFrameworkStores<BeekeepingDbContext>().
+           AddDefaultUI().AddDefaultTokenProviders();
+
             services.AddDbContext<BeekeepingDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("Default")));
-            
-            services.AddIdentity<IdentityUser, IdentityRole>().
-                AddEntityFrameworkStores<BeekeepingDbContext>().
-                AddDefaultUI().AddDefaultTokenProviders();
 
+       
+            //
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+            //
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
-            services.AddRazorPages();
+            services.AddRazorPages();           
         }
 
 
@@ -53,23 +63,26 @@ namespace BeekeepingStore
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-               
+                //
+                app.UseForwardedHeaders();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                //
+                app.UseForwardedHeaders();
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+           
             app.UseRouting();
             app.UseAuthentication();
 
             app.UseAuthorization();
             //  app.UseMvcWithDefaultRoute();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
@@ -83,7 +96,7 @@ namespace BeekeepingStore
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages(); 
+                endpoints.MapRazorPages();
             });
 
         }

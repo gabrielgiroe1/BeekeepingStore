@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using BeekeepingStore.Models;
 using BeekeepingStore.AppDbContext;
 using Microsoft.AspNetCore.Authorization;
-
 namespace BeekeepingStore.Controllers
 {
+    [Authorize(Roles =(Helpers.Roles.Executive +","+Helpers.Roles.Admin))]
+   // [Authorize(Roles ="Admin,Executive")]
     public class MakeController : Controller
     {
         private readonly BeekeepingDbContext _db;

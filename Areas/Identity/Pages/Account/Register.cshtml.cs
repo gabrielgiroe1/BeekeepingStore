@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BeekeepingStore.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+     [Authorize(Roles =Helpers.Roles.Admin)]    
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
@@ -30,13 +30,14 @@ namespace BeekeepingStore.Areas.Identity.Pages.Account
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,RoleManager<IdentityRole> roleManager)
+            IEmailSender emailSender, 
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            roleManager = _roleManager;
+            _roleManager = roleManager;
         }
 
         [BindProperty]
@@ -57,7 +58,7 @@ namespace BeekeepingStore.Areas.Identity.Pages.Account
             [Display(Name = "User Name")]
             public string UserName { get; set; }
 
-            [Required]            
+            [Required]
             [Display(Name = "Phone Noumber")]
             public string PhoneNoumber { get; set; }
 
@@ -75,6 +76,7 @@ namespace BeekeepingStore.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
             public bool IsAdmin { get; set; }
         }
 
@@ -95,7 +97,7 @@ namespace BeekeepingStore.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     //create a role if not exists
-                    if(!await _roleManager.RoleExistsAsync("Admin"))
+                    if (!await _roleManager.RoleExistsAsync("Admin"))
                     {
                         await _roleManager.CreateAsync(new IdentityRole("Admin"));
                     }
@@ -107,11 +109,11 @@ namespace BeekeepingStore.Areas.Identity.Pages.Account
                     //Assign user too a role as per the check box selection
                     if (Input.IsAdmin)
                     {
-                        await _userManager.AddToRoleAsync(user,"Admin");
+                        await _userManager.AddToRoleAsync(user, Helpers.Roles.Admin);
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(user, "Executive");
+                        await _userManager.AddToRoleAsync(user, Helpers.Roles.Executive);
                     }
                     _logger.LogInformation("User created a new account with password.");
 
@@ -132,8 +134,9 @@ namespace BeekeepingStore.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        //await _signInManager.SignInAsync(user, isPersistent: false);
+                        //return LocalRedirect(returnUrl);
+                        return RedirectToAction("Index");
                     }
                 }
                 foreach (var error in result.Errors)
