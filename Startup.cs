@@ -1,4 +1,5 @@
 using BeekeepingStore.AppDbContext;
+using BeekeepingStore.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -19,7 +20,7 @@ namespace BeekeepingStore
 {
     public class Startup
     {
-        //abc
+     
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -53,13 +54,14 @@ namespace BeekeepingStore
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
             //
+            services.AddScoped<IDBInitializer, DBInitializer>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
             services.AddRazorPages();           
         }
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDBInitializer dBInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -83,7 +85,8 @@ namespace BeekeepingStore
 
             app.UseAuthorization();
             //  app.UseMvcWithDefaultRoute();
-
+            dBInitializer.Initialize();
+          
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
