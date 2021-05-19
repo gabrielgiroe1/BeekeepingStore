@@ -28,7 +28,7 @@ namespace BeekeepingStore.Models
         public int Price { get; set; }
         [Required]
         public string Curency { get; set; }
-        [Required]
+      //  [Required]
         public string ImagePath { get; set; }
     }
 }

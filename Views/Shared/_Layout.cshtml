@@ -7,7 +7,7 @@
     <title>@ViewData["Title"] - BeekeepingStore</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-
+    <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
 
 </head>
 <body>
@@ -28,8 +28,9 @@
                                     Masters
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" asp-controller="Make" asp-action="Index">Makes</a>
+                                    <a class="dropdown-item " asp-controller="Make" asp-action="Index"><i class="fas fa-bug">Makes</i></a>
                                     <a class="dropdown-item" asp-controller="Model" asp-action="Index">Models</a>
+                                    <a class="dropdown-item" asp-controller="Honey" asp-action="Index">Products</a>
                                     @if (User.IsInRole(Roles.Admin))
                                     {
                                         <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Add User</a>
