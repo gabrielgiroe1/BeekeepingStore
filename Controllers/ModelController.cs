@@ -1,4 +1,6 @@
-﻿using BeekeepingStore.AppDbContext;
+﻿using AutoMapper;
+using BeekeepingStore.AppDbContext;
+using BeekeepingStore.Controllers.Resources;
 using BeekeepingStore.Models;
 using BeekeepingStore.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -15,10 +17,12 @@ namespace BeekeepingStore.Controllers
     public class ModelController : Controller
     {
         private readonly BeekeepingDbContext _db;
+        private readonly IMapper _mapper; 
         [BindProperty]
         public ModelViewModel modelVM { get; set; }
-        public ModelController(BeekeepingDbContext db)
+        public ModelController(BeekeepingDbContext db, IMapper mapper)
         {
+            _mapper = mapper;
             _db = db;
             modelVM = new ModelViewModel()
             {
@@ -80,6 +84,29 @@ namespace BeekeepingStore.Controllers
             _db.Models.Remove(model);
             _db.SaveChanges();
             return RedirectToAction(nameof(Index));
+        }
+        [AllowAnonymous]
+        [HttpGet("api/models/{MakeID}")]   
+        public IEnumerable<Model> Models(int MakeID)  
+        {
+            return _db.Models.ToList().Where(m => m.MakeId == MakeID);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("api/models")]    
+        public IEnumerable<ModelResources> Models()
+        {
+          //  return _db.Models.ToList();
+          var models = _db.Models.ToList();
+       
+           return _mapper.Map<List<Model>, List<ModelResources>>(models);
+
+        //    var modelResources = models.Select(m => new ModelResources {
+        //        Id = m.Id,
+        //         Name = m.Name
+        //}).ToList();
+        
+            
         }
     }
 }

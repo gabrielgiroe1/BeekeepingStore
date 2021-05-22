@@ -1,7 +1,7 @@
 ﻿@model BeekeepingStore.Models.ViewModels.HoneyViewModel
 @using BeekeepingStore.Extensions
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
@@ -10,7 +10,7 @@
         var ModelDLL = $("#Model");
         ModelDLL.prop('disable', true);
 
-        MakeDLL.change(function(){
+        MakeDLL.change(function () {
             if ($(this).val() == "0") {
                 ModelDLL.prop('disable', true);
                 ModelDLL.val("0");
@@ -23,7 +23,6 @@
                     success: function (data) {
                         ModelDLL.prop('disable', false);
                         ModelDLL.empty();
-                        console.log("Success");
                         ModelDLL.append($('<option/>', { value: '0', text: '--Select Model--' }));
                         $(data).each(function (index, item) {
                             ModelDLL.append($('<option/>', { value: item.id, text: item.name }))
@@ -38,8 +37,9 @@
 
 <br />
 <br />
-<h2 class="text-info">Add Honey</h2>
-<form method="post" enctype="multipart/form-data" action="Create">
+<h2 class="text-info">Update a product</h2>
+<form method="post" enctype="multipart/form-data" action="Update">
+    <input hidden asp-for="Honey.Id" />
     <div class="form-group row">
         <div class="col-2">
             <label asp-for="Makes"></label>
@@ -128,7 +128,7 @@
     </div>
     <br />
     <div class="form-group">
-        <input type="submit" class="btn btn-primary" value="Create" />
+        <input type="submit" class="btn btn-primary" value="Update" />
         <a asp-action="Index" class="btn btn-success">Back</a>
     </div>
 </form>

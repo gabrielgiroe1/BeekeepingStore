@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-
+using BeekeepingStore.Extensions;
 namespace BeekeepingStore.Models
 {
     public class Honey
@@ -11,22 +11,32 @@ namespace BeekeepingStore.Models
         public int Id { get; set; }
 
         public Make Make { get; set; }
+
+        [RegularExpression("^[1-9]*$",ErrorMessage ="Select Make")]
         public int MakeID { get; set; }
 
         public Model Model { get; set; }
+
+        [RegularExpression("^[1-100]*$", ErrorMessage = "Select Model")]
         public int ModelID { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Provide Year")]
+      [YearRangeDate(2000,ErrorMessage ="Invalid Year")]
         public int Year { get; set; }
         public string Details { get; set; }
-        [Required]
+
+        [Required(ErrorMessage ="Provide Seller Name")]
         public string SellerName { get; set; }
+
+        [EmailAddress(ErrorMessage ="Invalid Email ID")]
         public string SellerEmail { get; set; }
-        [Required]
+        [Required(ErrorMessage ="Provide Seller Phone")]
         public string SellerPhone { get; set; }
-        [Required]
+        [Required(ErrorMessage ="Provide Selling Price")]
         public int Price { get; set; }
-        [Required]
+
+        [RegularExpression("^[A-Za-z]*$", ErrorMessage = "Select Currency")]
+        [Required(ErrorMessage ="Provide Selling Currency")]
         public string Curency { get; set; }
       //  [Required]
         public string ImagePath { get; set; }

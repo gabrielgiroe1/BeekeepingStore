@@ -1,18 +1,17 @@
-﻿using System;
+﻿using BeekeepingStore.Models;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BeekeepingStore.Models
+namespace BeekeepingStore.Controllers.Resources
 {
-    public class Make
+    public class ModelResources
     {
         public int Id { get; set; }
-        [Required]
-        [StringLength(255)]
+       
         public string Name { get; set; }
-        
+ 
+      
     }
 }
-    

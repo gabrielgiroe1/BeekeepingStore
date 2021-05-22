@@ -15,6 +15,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using BeekeepingStore.MappingProfiles;
 
 namespace BeekeepingStore
 {
@@ -36,6 +38,8 @@ namespace BeekeepingStore
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
             });
+          
+            services.AddAutoMapper(typeof(MappingProfile));
             services.AddMvc();
             services.AddControllersWithViews();
 
@@ -56,7 +60,9 @@ namespace BeekeepingStore
             //
             services.AddScoped<IDBInitializer, DBInitializer>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
-            services.AddRazorPages();           
+             services.AddCloudscribePagination();
+            services.AddRazorPages();
+          
         }
 
 

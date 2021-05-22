@@ -13,6 +13,7 @@ using System.IO;
 //using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.AspNetCore.Hosting;
+using cloudscribe.Pagination.Models;
 
 
 namespace BeekeepingStore.Controllers
@@ -41,10 +42,25 @@ namespace BeekeepingStore.Controllers
                 Honey = new Models.Honey()
             };
         }
-        public IActionResult Index()
+        public IActionResult Index2()
         {
             var Honeys = _db.Honeys.Include(m => m.Make).Include(m => m.Model);
             return View(Honeys.ToList());
+        }
+        public IActionResult Index(int pageNoumber=1, int pageSize=2)
+        {
+            int ExcludeRecords = (pageSize * pageNoumber) - pageSize;
+            var Honeys = _db.Honeys.Include(m => m.Make).Include(m => m.Model).
+                Skip(ExcludeRecords).
+                Take(pageSize);
+            var result = new PagedResult<Honey>
+            {
+                Data = Honeys.AsNoTracking().ToList(),
+                TotalItems = _db.Honeys.Count(),
+                PageNumber = pageNoumber,
+                PageSize = pageSize
+            };
+            return View(result);
         }
         //get method
         public IActionResult Create()
@@ -97,8 +113,7 @@ namespace BeekeepingStore.Controllers
 
                 //Set the image path on database
                 SaveProduct.ImagePath = RelativeImagePath;
-                HoneyVM.Honey.ImagePath = SaveProduct.ImagePath;
-              
+               // HoneyVM.Honey.ImagePath = SaveProduct.ImagePath;              
                 _db.SaveChanges();
             }
             return RedirectToAction(nameof(Index));
@@ -120,6 +135,8 @@ namespace BeekeepingStore.Controllers
         {
             if (!ModelState.IsValid)
             {
+                HoneyVM.Makes = _db.Makes.ToList();
+                HoneyVM.Models = _db.Models.ToList();
                 return View(HoneyVM);
             }
             _db.Update(HoneyVM.Honey);
