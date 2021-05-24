@@ -95,17 +95,17 @@ namespace BeekeepingStore
           
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
-                endpoints.MapControllerRoute(
-                    "ByYearMonth",
-                    "make/propolis/{year:int:length(4)}/{month:int:range(1,12)}",
-                    new { controller = "make", action = "ByYearMonth" },
-                    new { year = @"2017|2018" }
-                    );
-
+               // endpoints.MapRazorPages();
+                //endpoints.MapControllerRoute(
+                //    "ByYearMonth",
+                //    "make/propolis/{year:int:length(4)}/{month:int:range(1,12)}",
+                //    new { controller = "make", action = "ByYearMonth" },
+                //    new { year = @"2017|2018" }
+                //    );
+                
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Honey}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
 

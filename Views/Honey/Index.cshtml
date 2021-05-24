@@ -1,30 +1,61 @@
-﻿@*@model IEnumerable<BeekeepingStore.Models.Honey>*@
-@model  cloudscribe.Pagination.Models.PagedResult<Honey>
+﻿@model cloudscribe.Pagination.Models.PagedResult<Honey>
+@using BeekeepingStore.Helpers
 @{
     ViewData["Title"] = "Index";
     ViewData["Controller"] = "Honey";
     ViewData["Action"] = "Index";
+
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <br />
 <br />
+<br />
+<form asp-action="Index" method="get">
+    <div>
+        <p>
+            Find Make:  <input type="text" name="searchString" value="@ViewBag.CurrentFilter" />
+            <input type="submit" value="Search" class="btn btn-info" />
+            <a asp-action="Index">Remove Filter</a>
+        </p>
+    </div>
+</form>
+
+
 <div class="row">
     <div class="col-6">
         <h2 class="text-info">Honeys</h2>
     </div>
-    <div class="col-6 text-right">
-        <a class="btn btn-info" asp-action="Create">Add new Products</a>
-    </div>
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Executive))
+    {
+        <div class="col-6 text-right">
+            <a class="btn btn-info" asp-action="Create">Add new Products</a>
+        </div>
+    }
     <br /><br />
     <div class="col-12">
         <table class="table table-striped border">
             <tr class="table-info">
                 <th>Honey Photo</th>
                 <th>Honey Detail</th>
-                <th>Price</th>
-                <th>Seller Information</th>
-                <th></th>
                 <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@ViewBag.PriceSortParam"
+                       asp-route-pageNoumber="@Model.PageNumber">
+                        Price
+                    </a>
+                </th>
+                <th>Seller Information</th>
+                @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Executive))
+                {
+                    <th></th>
+                }
+            else
+            {
+                <th class="text-right">View Details</th>
+            }
+
+
+
             </tr>
             @foreach (var item in Model.Data)
             {
@@ -40,26 +71,39 @@
                         <b>Email: </b>@Html.DisplayFor(m => item.SellerEmail)<br />
                         <b>Phone: </b>@Html.DisplayFor(m => item.SellerPhone)<br />
                     </td>
-                    <partial name="_TableButtonPartial" model="item.Id" />
+
+                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Executive))
+                    {
+                        <partial name="_TableButtonPartial" model="item.Id" />
+                    }
+                    else
+                    {
+                        <td class="text-right">
+                            <div class="btn-group " rold="group">
+                                <a type="button" class="btn btn-primary" href="@Url.Action("View/"+item.Id)"><i class="fas fa-search-plus"></i></a>
+
+                            </div>
+                        </td>
+                    }
                 </tr>
             }
         </table>
-      
+
         <partial name="_PaginationPartial" view-data="ViewData" model="Model" />
-       
-        <cs-pager 
-                  cs-paging-pagenumber=Model.PageNumber
-                  cs-paging-totalitems=Model.TotalItems
-                  cs-paging-pagesize=Model.PageSize
-                  cs-pagenumber-param="pagenumber"
-                  asp-controller=@ViewData["Controller"]
-                  asp-action=@ViewData["Action"]
-                  cs-pager-li-current-class="page-item active"
-                  cs-pager-li-other-class="page-item"
-                  cs-pager-li-non-active-class="page-item disabled"
-                  cs-pager-link-current-class="page-link"
-                  cs-pager-link-other-class="page-link"
-        ></cs-pager>
+
+        @*<cs-pager cs-paging-pagenumber=Model.PageNumber
+                      cs-paging-totalitems=Model.TotalItems
+                      cs-paging-pagesize=Model.PageSize
+                      cs-pagenumber-param="pagenumber"
+                      asp-controller=@ViewData["Controller"]
+                      asp-action=@ViewData["Action"]
+                      cs-pager-li-current-class="page-item active"
+                      cs-pager-li-other-class="page-item"
+                      cs-pager-li-non-active-class="page-item disabled"
+                      cs-pager-link-current-class="page-link"
+                      cs-pager-link-other-class="page-link">
+
+            </cs-pager>*@
 
 
     </div>

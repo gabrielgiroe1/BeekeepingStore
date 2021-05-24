@@ -8,7 +8,7 @@
     $(document).ready(function () {
         var MakeDLL = $("#Make");
         var ModelDLL = $("#Model");
-        ModelDLL.prop('disable', true);
+        //ModelDLL.prop('disable', true);
 
         MakeDLL.change(function () {
             if ($(this).val() == "0") {
@@ -38,8 +38,9 @@
 <br />
 <br />
 <h2 class="text-info">Update a product</h2>
-<form method="post" enctype="multipart/form-data" action="Update">
+<form method="post" enctype="multipart/form-data" asp-action="Edit">
     <input hidden asp-for="Honey.Id" />
+    <input hidden asp-for="Honey.ImagePath" />
     <div class="form-group row">
         <div class="col-2">
             <label asp-for="Makes"></label>

@@ -1,0 +1,97 @@
+﻿@model BeekeepingStore.Models.ViewModels.HoneyViewModel
+@using BeekeepingStore.Extensions
+@{
+    ViewData["Title"] = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<br />
+<br />
+<h2 class="text-info">View a product</h2>
+<form >
+    <div class="form-group row">
+        <div class="col-2">
+            <label asp-for="Makes"></label>
+        </div>
+        <div class="col-4">
+            <select disabled="disabled" asp-for="Honey.MakeID" asp-items="Model.Makes.ToSelectListItem()" class="form-control" id="Make"></select>            
+        </div>    
+    </div>
+    <div class="form-group row">
+        <div class="col-2">
+            <label asp-for="Models"></label>
+        </div>
+        <div class="col-4">
+            <select disabled="disabled" asp-for="Honey.ModelID" asp-items="Model.Models.ToSelectListItem()" class="form-control" id="Model"></select>
+            
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-2">
+            <label asp-for="Honey.Year"></label>
+        </div>
+        <div class="col-4">
+            <input disabled="disabled"  asp-for="Honey.Year" class="form-control" />
+            
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-2">
+            <label asp-for="Honey.Price"></label>
+        </div>
+        <div class="col-4">
+            <input disabled="disabled"  asp-for="Honey.Price" class="form-control" />
+         
+        </div>
+        <div class="col-1">
+            <label asp-for="Honey.Curency"></label>
+        </div>
+        <div class="col-4">
+            <select disabled="disabled"  asp-for="Honey.Curency" asp-items="Model.Currencies.ToSelectListItem()" class="form-control"></select>
+          
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-2">
+            <label asp-for="Honey.Details"></label>
+        </div>
+        <div class="col-4">
+            <textarea disabled="disabled"  asp-for="Honey.Details" class="form-control"></textarea>
+           
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-2">
+            <label asp-for="Honey.SellerName"></label>
+        </div>
+        <div class="col-4">
+            <input disabled="disabled"  asp-for="Honey.SellerName" class="form-control" />
+        
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-2">
+            <label asp-for="Honey.SellerEmail"></label>
+        </div>
+        <div class="col-4">
+            <input disabled="disabled"  asp-for="Honey.SellerEmail" class="form-control" />
+         
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-2">
+            <label asp-for="Honey.SellerPhone"></label>
+        </div>
+        <div class="col-4">
+            <input disabled="disabled"  asp-for="Honey.SellerPhone" class="form-control" />
+        
+        </div>
+    </div>
+    <br />
+    <div class="form-group">
+        
+        <a asp-action="Index" class="btn btn-success">Back</a>
+    </div>
+</form>
+

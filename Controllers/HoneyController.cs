@@ -14,13 +14,14 @@ using System.IO;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.AspNetCore.Hosting;
 using cloudscribe.Pagination.Models;
-
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace BeekeepingStore.Controllers
 {
 
     [Table("Honeys")]
-    [Authorize(Roles = "Admin,Executive")]
+    [Authorize(Roles =Helpers.Roles.Admin +"," +Helpers.Roles.Executive)]
     public class HoneyController : Controller
     {
         private readonly BeekeepingDbContext _db;
@@ -42,21 +43,46 @@ namespace BeekeepingStore.Controllers
                 Honey = new Models.Honey()
             };
         }
-        public IActionResult Index2()
+        [AllowAnonymous]
+        public IActionResult Index(string searchStringModel, string searchString,
+            string sortOrder, int pageNoumber = 1, int pageSize = 2)
         {
-            var Honeys = _db.Honeys.Include(m => m.Make).Include(m => m.Model);
-            return View(Honeys.ToList());
-        }
-        public IActionResult Index(int pageNoumber=1, int pageSize=2)
-        {
+            ViewBag.CurrentSortOrder = sortOrder;
+            ViewBag.CurrentFilter = searchString;
+            ViewBag.PriceSortParam = string.IsNullOrEmpty(sortOrder) ? "price_desc" : "";
             int ExcludeRecords = (pageSize * pageNoumber) - pageSize;
-            var Honeys = _db.Honeys.Include(m => m.Make).Include(m => m.Model).
-                Skip(ExcludeRecords).
-                Take(pageSize);
+
+            var Honeys = from b in _db.Honeys.Include(m => m.Make).Include(m => m.Model)
+                         select b;
+            var HoneyCount = Honeys.Count();
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                Honeys = Honeys.Where(b => b.Make.Name.Contains(searchString)).
+                    Where(b => b.Model.Name.Contains(searchStringModel));
+                HoneyCount = Honeys.Count();
+            }
+
+            // sorting Logic
+            {
+                switch (sortOrder)
+                {
+                    case "price_desc":
+                        Honeys = Honeys.OrderByDescending(b => b.Price);
+                        break;
+                    default:
+                        Honeys = Honeys.OrderBy(b => b.Price);
+                        break;
+                }
+            }
+
+            Honeys = Honeys.
+             Skip(ExcludeRecords).
+             Take(pageSize);
+
             var result = new PagedResult<Honey>
             {
                 Data = Honeys.AsNoTracking().ToList(),
-                TotalItems = _db.Honeys.Count(),
+                TotalItems = HoneyCount,
                 PageNumber = pageNoumber,
                 PageSize = pageSize
             };
@@ -69,7 +95,7 @@ namespace BeekeepingStore.Controllers
         }
         //post method
         [HttpPost, ActionName("Create")]
-       // [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public IActionResult CreatePost()
         {
             if (!ModelState.IsValid)
@@ -79,12 +105,14 @@ namespace BeekeepingStore.Controllers
                 return View(HoneyVM);
             }
             _db.Honeys.Add(HoneyVM.Honey);
+            UploadImageIfAvailable();
             _db.SaveChanges();
 
-            //////////////
-            //Save a Product Logic
-            //////////////
+            return RedirectToAction(nameof(Index));
+        }
 
+        private void UploadImageIfAvailable()
+        {
             //Get a product id we have saved in database
             var HoneyId = HoneyVM.Honey.Id;
 
@@ -101,8 +129,14 @@ namespace BeekeepingStore.Controllers
             if (files.Count != 0)
             {
                 var ImagePath = @"images\product\";
+
+                //get the extension of submitted file 
                 var Extension = Path.GetExtension(files[0].FileName);
+
+                //create a relative image path to be saved in database table
                 var RelativeImagePath = ImagePath + HoneyId + Extension;
+
+                //create the absolute image path to upload the physical file on server
                 var AbsolutImagePath = Path.Combine(wwwrootPath, RelativeImagePath);
 
                 //Upload the file on server
@@ -113,15 +147,17 @@ namespace BeekeepingStore.Controllers
 
                 //Set the image path on database
                 SaveProduct.ImagePath = RelativeImagePath;
-               // HoneyVM.Honey.ImagePath = SaveProduct.ImagePath;              
-                _db.SaveChanges();
             }
-            return RedirectToAction(nameof(Index));
+
         }
 
+        [HttpGet]
         public IActionResult Edit(int id)
         {
-            HoneyVM.Honey = _db.Honeys.Include(m => m.Make).SingleOrDefault(m => m.Id == id);
+            HoneyVM.Honey = _db.Honeys.SingleOrDefault(m => m.Id == id);
+
+            //filter the models associated to the selested make
+            HoneyVM.Models = _db.Models.Where(m => m.MakeId == HoneyVM.Honey.MakeID);
             if (HoneyVM.Honey == null)
             {
                 return NotFound();
@@ -131,7 +167,9 @@ namespace BeekeepingStore.Controllers
 
 
         [HttpPost, ActionName("Edit")]
-        public IActionResult EditPost(Model model)
+
+        // [ValidateAntiForgeryToken]
+        public IActionResult EditPost()
         {
             if (!ModelState.IsValid)
             {
@@ -139,8 +177,10 @@ namespace BeekeepingStore.Controllers
                 HoneyVM.Models = _db.Models.ToList();
                 return View(HoneyVM);
             }
-            _db.Update(HoneyVM.Honey);
+            _db.Honeys.Update(HoneyVM.Honey);
+            UploadImageIfAvailable();
             _db.SaveChanges();
+
             return RedirectToAction(nameof(Index));
         }
         [HttpPost]
@@ -154,6 +194,18 @@ namespace BeekeepingStore.Controllers
             _db.Honeys.Remove(model);
             _db.SaveChanges();
             return RedirectToAction(nameof(Index));
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult View(int id)
+        {
+            HoneyVM.Honey = _db.Honeys.SingleOrDefault(m => m.Id == id);
+
+            if (HoneyVM.Honey == null)
+            {
+                return NotFound();
+            }
+            return View(HoneyVM);
         }
     }
 
