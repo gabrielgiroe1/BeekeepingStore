@@ -70,7 +70,7 @@
             <label asp-for="Honey.Year"></label>
         </div>
         <div class="col-4">
-            <input asp-for="Honey.Year" class="form-control" />
+            <input asp-for="Honey.Year" class="form-control" min="2000" max="2021" />
             <span asp-validation-for="Honey.Year" class="text-danger"></span>
         </div>
     </div>

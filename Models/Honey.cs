@@ -12,33 +12,33 @@ namespace BeekeepingStore.Models
 
         public Make Make { get; set; }
 
-        [RegularExpression("^[1-9]*$",ErrorMessage ="Select Make")]
+        [RegularExpression("^[1-9]*$", ErrorMessage = "Select Make")]
         public int MakeID { get; set; }
 
         public Model Model { get; set; }
 
-        [RegularExpression("^[1-100]*$", ErrorMessage = "Select Model")]
+        //  [RegularExpression("^[1-102]*$", ErrorMessage = "Select Model")]
         public int ModelID { get; set; }
 
-        [Required(ErrorMessage ="Provide Year")]
-      [YearRangeDate(2000,ErrorMessage ="Invalid Year")]
+        [Required(ErrorMessage = "Provide Year")]
+        [Range(2000, 2030, ErrorMessage = "Invalid Year")]
         public int Year { get; set; }
         public string Details { get; set; }
 
-        [Required(ErrorMessage ="Provide Seller Name")]
+        [Required(ErrorMessage = "Provide Seller Name")]
         public string SellerName { get; set; }
 
-        [EmailAddress(ErrorMessage ="Invalid Email ID")]
+        [EmailAddress(ErrorMessage = "Invalid Email ID")]
         public string SellerEmail { get; set; }
-        [Required(ErrorMessage ="Provide Seller Phone")]
+        [Required(ErrorMessage = "Provide Seller Phone")]
         public string SellerPhone { get; set; }
-        [Required(ErrorMessage ="Provide Selling Price")]
+        [Required(ErrorMessage = "Provide Selling Price")]
         public int Price { get; set; }
 
         [RegularExpression("^[A-Za-z]*$", ErrorMessage = "Select Currency")]
-        [Required(ErrorMessage ="Provide Selling Currency")]
+        [Required(ErrorMessage = "Provide Selling Currency")]
         public string Curency { get; set; }
-      //  [Required]
+        //  [Required]
         public string ImagePath { get; set; }
     }
 }

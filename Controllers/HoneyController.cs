@@ -21,7 +21,7 @@ namespace BeekeepingStore.Controllers
 {
 
     [Table("Honeys")]
-    [Authorize(Roles =Helpers.Roles.Admin +"," +Helpers.Roles.Executive)]
+    [Authorize(Roles = Helpers.Roles.Admin + "," + Helpers.Roles.Executive)]
     public class HoneyController : Controller
     {
         private readonly BeekeepingDbContext _db;
@@ -104,7 +104,10 @@ namespace BeekeepingStore.Controllers
                 HoneyVM.Models = _db.Models.ToList();
                 return View(HoneyVM);
             }
+
             _db.Honeys.Add(HoneyVM.Honey);
+
+            _db.SaveChanges();
             UploadImageIfAvailable();
             _db.SaveChanges();
 
@@ -113,9 +116,6 @@ namespace BeekeepingStore.Controllers
 
         private void UploadImageIfAvailable()
         {
-            //Get a product id we have saved in database
-            var HoneyId = HoneyVM.Honey.Id;
-
             //Get wwroothpath to save the file on server
             string wwwrootPath = _hostingEnviroment.WebRootPath;
 
@@ -123,7 +123,7 @@ namespace BeekeepingStore.Controllers
             var files = HttpContext.Request.Form.Files;
 
             //Get the references of DBSet for the product i just savesd in database
-            var SaveProduct = _db.Honeys.Find(HoneyId);
+            var product = _db.Honeys.Find(HoneyVM.Honey.Id);
 
             //Upload the files on server and save the image path of user have upload any file
             if (files.Count != 0)
@@ -134,19 +134,20 @@ namespace BeekeepingStore.Controllers
                 var Extension = Path.GetExtension(files[0].FileName);
 
                 //create a relative image path to be saved in database table
-                var RelativeImagePath = ImagePath + HoneyId + Extension;
+                var fileName = HoneyVM.Honey.Id + Extension;
+                var relativeImagePath = ImagePath + fileName;
 
                 //create the absolute image path to upload the physical file on server
-                var AbsolutImagePath = Path.Combine(wwwrootPath, RelativeImagePath);
+                var absolutImagePath = Path.Combine(wwwrootPath, relativeImagePath);
 
                 //Upload the file on server
-                using (var fileStream = new FileStream(AbsolutImagePath, FileMode.Create))
+                using (var fileStream = new FileStream(absolutImagePath, FileMode.Create))
                 {
                     files[0].CopyTo(fileStream);
                 };
 
                 //Set the image path on database
-                SaveProduct.ImagePath = RelativeImagePath;
+                product.ImagePath = fileName;
             }
 
         }
