@@ -22,7 +22,7 @@ namespace BeekeepingStore
 {
     public class Startup
     {
-     
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -38,7 +38,7 @@ namespace BeekeepingStore
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
             });
-          
+
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddMvc();
             services.AddControllersWithViews();
@@ -50,7 +50,7 @@ namespace BeekeepingStore
             services.AddDbContext<BeekeepingDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("Default")));
 
-       
+
             //
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -60,9 +60,9 @@ namespace BeekeepingStore
             //
             services.AddScoped<IDBInitializer, DBInitializer>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
-             services.AddCloudscribePagination();
+            services.AddCloudscribePagination();
             services.AddRazorPages();
-          
+
         }
 
 
@@ -85,24 +85,24 @@ namespace BeekeepingStore
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-           
+
             app.UseRouting();
             app.UseAuthentication();
 
             app.UseAuthorization();
             //  app.UseMvcWithDefaultRoute();
             dBInitializer.Initialize();
-          
+
             app.UseEndpoints(endpoints =>
             {
-               // endpoints.MapRazorPages();
+                // endpoints.MapRazorPages();
                 //endpoints.MapControllerRoute(
                 //    "ByYearMonth",
                 //    "make/propolis/{year:int:length(4)}/{month:int:range(1,12)}",
                 //    new { controller = "make", action = "ByYearMonth" },
                 //    new { year = @"2017|2018" }
                 //    );
-                
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Honey}/{action=Index}/{id?}");

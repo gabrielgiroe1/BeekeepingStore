@@ -10,12 +10,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
-//using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.AspNetCore.Hosting;
 using cloudscribe.Pagination.Models;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace BeekeepingStore.Controllers
 {
@@ -45,20 +42,21 @@ namespace BeekeepingStore.Controllers
         }
         [AllowAnonymous]
         public IActionResult Index(string searchStringModel, string searchString,
-            string sortOrder, int pageNoumber = 1, int pageSize = 2)
+            string sortOrder, int pageNumber = 1, int pageSize = 2)
         {
+           
             ViewBag.CurrentSortOrder = sortOrder;
-            ViewBag.CurrentFilter = searchString;
+            ViewBag.CurrentFilter = searchString;///
             ViewBag.PriceSortParam = string.IsNullOrEmpty(sortOrder) ? "price_desc" : "";
-            int ExcludeRecords = (pageSize * pageNoumber) - pageSize;
+            int ExcludeRecords = (pageSize * pageNumber) - pageSize;
 
             var Honeys = from b in _db.Honeys.Include(m => m.Make).Include(m => m.Model)
                          select b;
             var HoneyCount = Honeys.Count();
             if (!String.IsNullOrEmpty(searchString))
             {
-                Honeys = Honeys.Where(b => b.Make.Name.Contains(searchString)).
-                    Where(b => b.Model.Name.Contains(searchStringModel));
+                Honeys = Honeys.Where(b => b.Make.Name.Contains(searchString));//.
+                 //   Where(b => b.Model.Name.Contains(searchStringModel));
                 HoneyCount = Honeys.Count();
             }
 
@@ -75,7 +73,7 @@ namespace BeekeepingStore.Controllers
                 }
             }
 
-            Honeys = Honeys.
+            Honeys = _db.Honeys.
              Skip(ExcludeRecords).
              Take(pageSize);
 
@@ -83,7 +81,7 @@ namespace BeekeepingStore.Controllers
             {
                 Data = Honeys.AsNoTracking().ToList(),
                 TotalItems = HoneyCount,
-                PageNumber = pageNoumber,
+                PageNumber = pageNumber,
                 PageSize = pageSize
             };
             return View(result);
