@@ -73,7 +73,7 @@ namespace BeekeepingStore.Controllers
                 }
             }
 
-            Honeys = _db.Honeys.
+            Honeys = Honeys.
              Skip(ExcludeRecords).
              Take(pageSize);
 
